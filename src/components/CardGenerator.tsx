@@ -145,11 +145,10 @@ const CardGenerator = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setTheme(t as typeof theme)}
-                      className={`px-4 py-3 rounded-lg font-semibold capitalize transition-all ${
-                        theme === t
-                          ? 'bg-rose-500 text-white shadow-lg'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
+                      className={`px-4 py-3 rounded-lg font-semibold capitalize transition-all ${theme === t
+                        ? 'bg-rose-500 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
                     >
                       {t}
                     </motion.button>
@@ -185,11 +184,16 @@ const CardGenerator = () => {
 
                         const { error: uploadError } = await supabase.storage
                           .from('photos')
-                          .upload(filePath, file);
+                          .upload(filePath, file, {
+                            cacheControl: '3600',
+                            upsert: true,
+                          });
+
 
                         if (uploadError) {
                           console.error('Upload error:', uploadError);
-                          alert('Failed to upload image.');
+                          alert(uploadError.message);
+                          console.error(uploadError);
                           return;
                         }
 
@@ -208,23 +212,16 @@ const CardGenerator = () => {
                   />
 
                   <button
-  type="button"
-  onClick={() => fileInputRef.current?.click()}
-  className="
-    flex-shrink-0
-    h-[48px]
-    px-4
-    bg-gray-100
-    rounded-lg
-    hover:bg-gray-200
-    transition-colors
-    flex items-center justify-center gap-2
-    whitespace-nowrap
-  "
->
-  <Upload className="w-5 h-5 text-gray-600" />
-  {uploading ? 'Uploading...' : ''}
-</button>
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="
+                                flex-shrink-0 h-[48px] px-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2
+                                whitespace-nowrap
+                              "
+                  >
+                    <Upload className="w-5 h-5 text-gray-600" />
+                    {uploading ? 'Uploading...' : 'Upload'}
+                  </button>
 
                 </div>
               </div>
@@ -243,14 +240,17 @@ const CardGenerator = () => {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center justify-center"
+            className="flex items-start justify-center"
+
           >
             {showCard ? (
               <div className="space-y-4 w-full">
                 <div
                   ref={cardRef}
-                  className={`${themes[theme].bg} ${themes[theme].text} rounded-2xl p-8 shadow-2xl relative overflow-hidden`}
-                  style={{ minHeight: '500px' }}
+                  className={`${themes[theme].bg} ${themes[theme].text} 
+rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden 
+w-full max-w-md mx-auto`}
+
                 >
                   <div className="absolute inset-0 opacity-10 text-6xl flex flex-wrap">
                     {Array.from({ length: 50 }).map((_, i) => (
@@ -266,7 +266,16 @@ const CardGenerator = () => {
                         <img
                           src={photoUrl}
                           alt="Love"
-                          className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-xl"
+                          className="
+w-40 h-40 md:w-48 md:h-48
+rounded-full
+mx-auto
+object-cover
+object-center
+border-4 border-white
+shadow-xl
+"
+
                         />
                       </div>
                     )}
