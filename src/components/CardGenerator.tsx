@@ -220,7 +220,7 @@ const CardGenerator = () => {
                               "
                   >
                     <Upload className="w-5 h-5 text-gray-600" />
-                    {uploading ? 'Uploading...' : 'Upload'}
+                    {uploading ? '' : ''}
                   </button>
 
                 </div>
