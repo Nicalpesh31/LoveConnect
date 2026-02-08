@@ -1,0 +1,2 @@
+# LoveConnect
+LoveConnect is a modern, interactive Valentine-themed web application designed to help users express their feelings in a creative and memorable way. The platform allows users to generate digital love cards, write romantic messages, calculate compatibility, and plan surprises for Valentine Week
