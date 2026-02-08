@@ -1,14 +1,17 @@
-// ...existing code...
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
-const ViewCard = ({ shareCode }: { shareCode?: string }) => {
+const ViewCard = () => {
+  const { shareCode } = useParams<{ shareCode: string }>();
   const [card, setCard] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!shareCode) return;
 
     const fetchCard = async () => {
+      setLoading(true);
       const { data, error } = await supabase
         .from("love_cards")
         .select("*")
@@ -16,6 +19,7 @@ const ViewCard = ({ shareCode }: { shareCode?: string }) => {
         .single();
 
       if (!error) setCard(data);
+      setLoading(false);
     };
 
     fetchCard();
@@ -28,10 +32,17 @@ const ViewCard = ({ shareCode }: { shareCode?: string }) => {
       </div>
     );
 
-  if (!card)
+  if (loading)
     return (
       <div style={{ height: "100vh", display: "grid", placeItems: "center" }}>
         Loading love ❤️...
+      </div>
+    );
+
+  if (!card)
+    return (
+      <div style={{ height: "100vh", display: "grid", placeItems: "center" }}>
+        Card not found ❌
       </div>
     );
 
@@ -51,6 +62,7 @@ const ViewCard = ({ shareCode }: { shareCode?: string }) => {
           color: "white",
           textAlign: "center",
           maxWidth: "400px",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
         }}
       >
         {card.photo_url && (
