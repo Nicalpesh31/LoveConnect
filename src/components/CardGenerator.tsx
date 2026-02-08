@@ -70,23 +70,41 @@ const CardGenerator = () => {
   };
 
   const handleDownload = async () => {
-    if (cardRef.current) {
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 2,
-        backgroundColor: null,
-      });
-      const link = document.createElement('a');
-      link.download = `love-card-${Date.now()}.png`;
-      link.href = canvas.toDataURL();
-      link.click();
-    }
-  };
+  if (!cardRef.current) return;
 
-  const handleShare = () => {
-    const shareUrl = `${window.location.origin}?card=${shareCode}`;
+  const canvas = await html2canvas(cardRef.current, {
+    scale: 3,              // better quality
+    useCORS: true,         // ⭐ VERY IMPORTANT
+    backgroundColor: null,
+  });
+
+  const link = document.createElement('a');
+  link.download = `love-card-${Date.now()}.png`;
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+};
+
+
+  const handleShare = async () => {
+  const shareUrl = `${window.location.origin}/card/${shareCode}`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "LoveConnect Card ❤️",
+        text: "Check out this love card I made for you!",
+        url: shareUrl,
+      });
+    } catch (err) {
+      console.log("Share cancelled");
+    }
+  } else {
+    // fallback for desktop
     navigator.clipboard.writeText(shareUrl);
-    alert('Share link copied to clipboard!');
-  };
+    alert("Link copied to clipboard!");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 to-pink-100 py-12 px-4">
@@ -265,6 +283,7 @@ w-full max-w-md mx-auto`}
                       <div className="mb-6">
                         <img
                           src={photoUrl}
+                          crossOrigin="anonymous" 
                           alt="Love"
                           className="
 w-40 h-40 md:w-48 md:h-48
