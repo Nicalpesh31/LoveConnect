@@ -101,11 +101,11 @@ const CardGenerator = () => {
           <p className="text-gray-600">Create a beautiful card for your loved one</p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-2xl p-8 shadow-xl"
+            className="bg-white rounded-2xl p-5 md:p-8 shadow-xl"
           >
             <h3 className="text-2xl font-bold text-gray-800 mb-6">Card Details</h3>
 
@@ -208,13 +208,24 @@ const CardGenerator = () => {
                   />
 
                   <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="px-4 py-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
-                  >
-                    <Upload className="w-5 h-5 text-gray-600" />
-                    {uploading ? 'Uploading...' : 'Upload'}
-                  </button>
+  type="button"
+  onClick={() => fileInputRef.current?.click()}
+  className="
+    flex-shrink-0
+    h-[48px]
+    px-4
+    bg-gray-100
+    rounded-lg
+    hover:bg-gray-200
+    transition-colors
+    flex items-center justify-center gap-2
+    whitespace-nowrap
+  "
+>
+  <Upload className="w-5 h-5 text-gray-600" />
+  {uploading ? 'Uploading...' : ''}
+</button>
+
                 </div>
               </div>
 
