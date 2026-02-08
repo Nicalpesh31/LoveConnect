@@ -9,9 +9,11 @@ const CardGenerator = () => {
   const [message, setMessage] = useState('');
   const [theme, setTheme] = useState<'romantic' | 'modern' | 'classic' | 'playful'>('romantic');
   const [photoUrl, setPhotoUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
   const [showCard, setShowCard] = useState(false);
   const [shareCode, setShareCode] = useState('');
   const cardRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const themes = {
     romantic: {
@@ -167,8 +169,51 @@ const CardGenerator = () => {
                     placeholder="https://example.com/photo.jpg"
                     className="flex-1 px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-rose-500 focus:outline-none transition-colors"
                   />
-                  <button className="px-4 py-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      try {
+                        setUploading(true);
+                        const fileExt = file.name.split('.').pop();
+                        const fileName = `${Date.now()}.${fileExt}`;
+                        const filePath = `${fileName}`;
+
+                        const { error: uploadError } = await supabase.storage
+                          .from('photos')
+                          .upload(filePath, file);
+
+                        if (uploadError) {
+                          console.error('Upload error:', uploadError);
+                          alert('Failed to upload image.');
+                          return;
+                        }
+
+                        const { data: publicData } = supabase.storage.from('photos').getPublicUrl(filePath);
+                        const publicUrl = (publicData as any)?.publicUrl ?? (publicData as any)?.publicURL;
+                        if (publicUrl) setPhotoUrl(publicUrl);
+                      } catch (err) {
+                        console.error('Upload exception:', err);
+                        alert('Failed to upload image.');
+                      } finally {
+                        setUploading(false);
+                        // reset the input so same file can be selected again if needed
+                        if (fileInputRef.current) fileInputRef.current.value = '';
+                      }
+                    }}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-4 py-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
+                  >
                     <Upload className="w-5 h-5 text-gray-600" />
+                    {uploading ? 'Uploading...' : 'Upload'}
                   </button>
                 </div>
               </div>
