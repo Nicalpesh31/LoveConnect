@@ -6,6 +6,7 @@ import ValentineWeekPlanner from './components/ValentineWeekPlanner';
 import LoveCalculator from './components/LoveCalculator';
 import CountdownTimer from './components/CountdownTimer';
 import MemoriesGallery from './components/MemoriesGallery';
+import ViewCard from './components/ViewCard';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -24,6 +25,8 @@ function App() {
         return <CountdownTimer />;
       case 'memories':
         return <MemoriesGallery />;
+      case 'view':
+        return <ViewCard />; 
       default:
         return <Home setActiveTab={setActiveTab} />;
     }
